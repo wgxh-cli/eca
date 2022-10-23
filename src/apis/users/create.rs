@@ -3,8 +3,8 @@ use crate::models::users::*;
 use crate::apis::res::*;
 
 pub fn create(users: SharedUsers) -> filters::BoxedFilter<(Json, )> {
-  post()
-    .and(path!("users" / "create"))
+  path!("users" / "create")
+    .and(post())
     .and(with_users(users))
     .and(body::json::<CreateUser>())
     .map(create_user)

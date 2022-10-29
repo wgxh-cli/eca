@@ -1,3 +1,4 @@
+use crate::models::*;
 use crate::models::users::*;
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
@@ -20,13 +21,13 @@ impl From<CreateUser> for User {
   }
 }
 
-pub fn create_user(users: SharedUsers, create_user_dto: CreateUser) -> Result<UserUUID, String> {
-  let mut writer = users.write().unwrap();
+pub fn create_user(shared_groups: SharedDB, create_user_dto: CreateUser) -> Result<UserUUID, String> {
+  let mut writer = shared_groups.write().unwrap();
   println!("THIS IS A TEST LINE");
 
   Some(User::from(create_user_dto))
-    .filter(|user| writer.iter().all(|auser| auser.email != user.email))
-    .inspect(move |user| writer.push(user.clone()))
+    .filter(|user| writer.users.iter().all(|auser| auser.email != user.email))
+    .inspect(move |user| writer.users.push(user.clone()))
     .map(|user| user.uuid())
     .ok_or_else(|| "Failed to create user: duplicated email address".to_string())
 }
